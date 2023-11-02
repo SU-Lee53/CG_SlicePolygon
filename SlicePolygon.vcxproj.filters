@@ -5,79 +5,132 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\define, enum, struct">
+      <UniqueIdentifier>{de0e2f49-5cd6-4afb-bd65-b5c2dd5a4144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Camera">
+      <UniqueIdentifier>{a5273d38-d028-42ea-a302-a713c879cb3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Core">
+      <UniqueIdentifier>{4a37f165-bc14-4672-8deb-f2ae1f1be820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Shader">
+      <UniqueIdentifier>{787b7399-bffe-48e2-9ea6-966d42d3d875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Shader\glsl">
+      <UniqueIdentifier>{7467f826-1ced-4c8d-b530-ba969f606375}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Manager">
+      <UniqueIdentifier>{ca0b49ee-7119-4407-a270-4a04c24738d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\pch">
+      <UniqueIdentifier>{c29d2f7f-4005-4fd4-be4c-2c128e046254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Projection">
+      <UniqueIdentifier>{142770db-22db-4fc7-a994-48fcd7cdf468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Utills">
+      <UniqueIdentifier>{478350e7-c85b-4530-a406-c2ab3e1b2616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Slice">
+      <UniqueIdentifier>{d28c3010-d4e8-4c1a-bc60-bf3deac81dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Object">
+      <UniqueIdentifier>{72b2d56c-a7af-4767-9faf-ca8518388ed7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="__struct.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="__defines.h">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\define, enum, struct</Filter>
     </ClInclude>
     <ClInclude Include="__enum.h">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\define, enum, struct</Filter>
+    </ClInclude>
+    <ClInclude Include="__struct.h">
+      <Filter>소스 파일\define, enum, struct</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Core.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Projection.h">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Core</Filter>
     </ClInclude>
     <ClInclude Include="Shaders.h">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>소스 파일\Manager</Filter>
     </ClInclude>
     <ClInclude Include="TransformManager.h">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Manager</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\pch</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection.h">
+      <Filter>소스 파일\Projection</Filter>
+    </ClInclude>
+    <ClInclude Include="Utills.h">
+      <Filter>소스 파일\Utills</Filter>
+    </ClInclude>
+    <ClInclude Include="SliceMain.h">
+      <Filter>소스 파일\Slice</Filter>
+    </ClInclude>
+    <ClInclude Include="Slicetool.h">
+      <Filter>소스 파일\Slice</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>소스 파일\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Core.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="main_core.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Projection.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Camera.cpp">
+      <Filter>소스 파일\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="TransformManager.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Core.cpp">
+      <Filter>소스 파일\Core</Filter>
     </ClCompile>
     <ClCompile Include="Shaders.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Utills.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>소스 파일\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformManager.cpp">
+      <Filter>소스 파일\Manager</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\pch</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection.cpp">
+      <Filter>소스 파일\Projection</Filter>
+    </ClCompile>
+    <ClCompile Include="Utills.cpp">
+      <Filter>소스 파일\Utills</Filter>
+    </ClCompile>
+    <ClCompile Include="SliceMain.cpp">
+      <Filter>소스 파일\Slice</Filter>
+    </ClCompile>
+    <ClCompile Include="Slicetool.cpp">
+      <Filter>소스 파일\Slice</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>소스 파일\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="vertex.glsl">
+      <Filter>소스 파일\Shader\glsl</Filter>
+    </None>
     <None Include="fragment.glsl">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Shader\glsl</Filter>
     </None>
   </ItemGroup>
 </Project>

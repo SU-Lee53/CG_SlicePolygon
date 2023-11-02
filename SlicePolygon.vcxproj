@@ -22,10 +22,14 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="Shaders.h" />
+    <ClInclude Include="SliceMain.h" />
+    <ClInclude Include="Slicetool.h" />
     <ClInclude Include="TransformManager.h" />
+    <ClInclude Include="Utills.h" />
     <ClInclude Include="__defines.h" />
     <ClInclude Include="__enum.h" />
     <ClInclude Include="__struct.h" />
@@ -35,14 +39,18 @@
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main_core.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="SliceMain.cpp" />
+    <ClCompile Include="Slicetool.cpp" />
     <ClCompile Include="TransformManager.cpp" />
     <ClCompile Include="Utills.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl" />
+    <None Include="vertex.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -136,6 +144,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>glew32.lib freeglut.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

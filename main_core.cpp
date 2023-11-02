@@ -1,7 +1,7 @@
 #include "pch.h"
+#include "SliceMain.h"
 
-
-
+LOAD_EX(SliceMain);
 
 void drawScene()
 {
@@ -21,6 +21,8 @@ int main(int argc, char** argv)
 	Core::GetInstance().BindDrawCallback(drawScene);
 	Core::GetInstance().BindReshapeCallback(Reshape);
 	Core::GetInstance().UseKeyboardCallback();
+	Core::GetInstance().UseMouseCallback();
+	Core::GetInstance().UseMotionCallback();
 	Core::GetInstance().UseSpecialKeyCallback();
 	
 

@@ -15,7 +15,6 @@ void InputManager::MouseInput(int button, int state, int x, int y)
 	pos = AdjustMouseCoordinate(pos);
 	MouseState* s = new MouseState { button, state, pos };
 	InputManager::GetInstance().GetMouseBuf().push(s);
-	glutPostRedisplay();
 }
 
 void InputManager::MotionInput(int x, int y)
@@ -23,7 +22,6 @@ void InputManager::MotionInput(int x, int y)
 	Coord pos = AdjustMouseCoordinate({static_cast<float>(x), static_cast<float>(y) });
 	Coord* s = new Coord{ pos.x, pos.y };
 	InputManager::GetInstance().GetMotionBuf().push(s);
-	glutPostRedisplay();
 }
 
 void InputManager::KeyboardInput(unsigned char key, int x, int y)
@@ -32,7 +30,6 @@ void InputManager::KeyboardInput(unsigned char key, int x, int y)
 	pos = AdjustMouseCoordinate(pos);
 	KeyboardState* s = new KeyboardState{ key, pos };
 	InputManager::GetInstance().GetKeyboardBuf().push(s);
-	glutPostRedisplay();
 }
 
 void InputManager::SpecialKeyInput(int key, int x, int y)
@@ -41,7 +38,6 @@ void InputManager::SpecialKeyInput(int key, int x, int y)
 	pos = AdjustMouseCoordinate(pos);
 	SpecialState* s = new SpecialState{ key, pos };
 	InputManager::GetInstance().GetSpecialKeyBuf().push(s);
-	glutPostRedisplay();
 }
 
 MouseState* InputManager::DequeueMouseBuf()
@@ -60,7 +56,7 @@ MouseState* InputManager::DequeueMouseBuf()
 
 Coord* InputManager::DequeueMotionBuf()
 {
-	if (keyboardBuf.empty())
+	if (motionBuf.empty())
 	{
 		return nullptr;
 	}

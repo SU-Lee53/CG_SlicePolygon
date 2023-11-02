@@ -23,6 +23,7 @@
 #include "Shaders.h"
 #include "VBO.h"
 #include "VAO.h"
+#include "Object.h"
 #include "Camera.h"
 #include "Projection.h"
 

@@ -71,6 +71,16 @@ void DrawAxis(float length)
 	glEnd();
 }
 
+void DrawLine(Coord start, Coord end)
+{
+	glBegin(GL_LINES);
+
+	glVertex3f(start.x, start.y, 0.0);
+	glVertex3f(end.x, end.y, 0.0);
+
+	glEnd();
+}
+
 void SetBackground(RGB rgb)
 {
 	glClearColor(rgb.Red, rgb.Green, rgb.Blue, 1.0f);

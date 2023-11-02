@@ -13,7 +13,6 @@ struct KeyboardState
 	Coord pos;
 };
 
-
 struct SpecialState
 {
 	int key;

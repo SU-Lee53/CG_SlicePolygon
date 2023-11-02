@@ -11,4 +11,6 @@ RGB GetRandomRGB();
 
 void DrawAxis(float length);
 
+void DrawLine(Coord start, Coord end);
+
 void SetBackground(RGB rgb);
