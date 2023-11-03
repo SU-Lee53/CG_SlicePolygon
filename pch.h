@@ -30,3 +30,4 @@
 #include "Core.h"
 #include "InputManager.h"
 #include "TransformManager.h"
+#include "Slicetool.h"

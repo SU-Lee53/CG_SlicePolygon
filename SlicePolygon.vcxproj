@@ -30,6 +30,8 @@
     <ClInclude Include="Slicetool.h" />
     <ClInclude Include="TransformManager.h" />
     <ClInclude Include="Utills.h" />
+    <ClInclude Include="VAO.h" />
+    <ClInclude Include="VBO.h" />
     <ClInclude Include="__defines.h" />
     <ClInclude Include="__enum.h" />
     <ClInclude Include="__struct.h" />
@@ -47,6 +49,8 @@
     <ClCompile Include="Slicetool.cpp" />
     <ClCompile Include="TransformManager.cpp" />
     <ClCompile Include="Utills.cpp" />
+    <ClCompile Include="VAO.cpp" />
+    <ClCompile Include="VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl" />

@@ -73,10 +73,22 @@ void DrawAxis(float length)
 
 void DrawLine(Coord start, Coord end)
 {
+	glLineWidth(3.0f);
 	glBegin(GL_LINES);
+	
 
 	glVertex3f(start.x, start.y, 0.0);
 	glVertex3f(end.x, end.y, 0.0);
+
+	glEnd();
+}
+
+void DrawPoint(Coord point)
+{
+	glPointSize(10.0f);
+	glBegin(GL_POINTS);
+
+	glVertex3f(point.x, point.y, 0.0);
 
 	glEnd();
 }
@@ -85,4 +97,14 @@ void SetBackground(RGB rgb)
 {
 	glClearColor(rgb.Red, rgb.Green, rgb.Blue, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+glm::vec3 GetRandomVec3()
+{
+	glm::vec3 temp;
+	temp.x = static_cast<float>(rand()) / (RAND_MAX / 2) - 1.0f;
+	temp.y = static_cast<float>(rand()) / (RAND_MAX / 2) - 1.0f;
+	temp.z = static_cast<float>(rand()) / (RAND_MAX / 2) - 1.0f;
+
+	return temp;
 }

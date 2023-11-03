@@ -13,4 +13,8 @@ void DrawAxis(float length);
 
 void DrawLine(Coord start, Coord end);
 
+void DrawPoint(Coord point);
+
 void SetBackground(RGB rgb);
+
+glm::vec3 GetRandomVec3();

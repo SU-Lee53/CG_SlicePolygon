@@ -42,6 +42,9 @@
     <Filter Include="소스 파일\Object">
       <UniqueIdentifier>{72b2d56c-a7af-4767-9faf-ca8518388ed7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\VAO,VBO">
+      <UniqueIdentifier>{2eb27cbe-b1ba-400b-aa21-096ad1db5a21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__defines.h">
@@ -86,6 +89,12 @@
     <ClInclude Include="Object.h">
       <Filter>소스 파일\Object</Filter>
     </ClInclude>
+    <ClInclude Include="VAO.h">
+      <Filter>소스 파일\VAO,VBO</Filter>
+    </ClInclude>
+    <ClInclude Include="VBO.h">
+      <Filter>소스 파일\VAO,VBO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_core.cpp">
@@ -123,6 +132,12 @@
     </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="VBO.cpp">
+      <Filter>소스 파일\VAO,VBO</Filter>
+    </ClCompile>
+    <ClCompile Include="VAO.cpp">
+      <Filter>소스 파일\VAO,VBO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

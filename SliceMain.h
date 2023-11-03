@@ -1,5 +1,4 @@
 #pragma once
-#include "Slicetool.h"
 
 struct LINE_INFO
 {
@@ -23,10 +22,15 @@ public:
 	void Render();
 
 
-private:
+private:	
+	Camera* cam;
+	Projection* proj;
+	glm::mat4 worldMat = glm::mat4(1.0f);
+	unsigned int shaderID;
+
 	LINE_INFO sliceLine = { {-1.0f, -1.0f, 0.0f}, {-1.0f, -1.0f, 0.0f} };
 
-
+	Object* obj = nullptr;
 
 };
 
