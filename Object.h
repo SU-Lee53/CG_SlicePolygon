@@ -1,7 +1,7 @@
 #pragma once
 #include <algorithm>
 
-const int MAX_POINT = 5;
+const int MAX_POINT = 6;
 
 enum OBJ_TYPE
 {

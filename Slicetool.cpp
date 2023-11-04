@@ -26,7 +26,7 @@ void Slicetool::Slice(LINE_INFO sliceLine, Object* obj)
 			glm::vec3 cp = GetCrossingPoint(sliceLine, param);
 			cout << "Crossing Point: (" << cp[0] << ", " << cp[1] << ", " << cp[2] << ")" << endl;
 			Coord pos = { cp[0], cp[1], cp[2] };
-			DrawPoint(pos);
+			
 		}
 	}
 	cout << endl;

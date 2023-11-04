@@ -85,6 +85,8 @@ void SliceMain::Render()
 	if (obj == nullptr)
 	{
 		glm::vec3 vertices[] = {
+			// glm::vec3(0.3f, 0.5f, 0.0f),
+			// glm::vec3(-0.3f, 0.5f, 0.0f),
 			glm::vec3(0.0f, 0.5f, 0.0f),
 			glm::vec3(-0.5f, 0.0f, 0.0f),
 			glm::vec3(0.5f, 0.0f, 0.0f),
