@@ -28,6 +28,7 @@
     <ClInclude Include="Shaders.h" />
     <ClInclude Include="SliceMain.h" />
     <ClInclude Include="Slicetool.h" />
+    <ClInclude Include="TimeManager.h" />
     <ClInclude Include="TransformManager.h" />
     <ClInclude Include="Utills.h" />
     <ClInclude Include="VAO.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="SliceMain.cpp" />
     <ClCompile Include="Slicetool.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="TransformManager.cpp" />
     <ClCompile Include="Utills.cpp" />
     <ClCompile Include="VAO.cpp" />

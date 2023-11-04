@@ -9,11 +9,19 @@ Slicetool::~Slicetool()
 {
 }
 
-void Slicetool::Slice(LINE_INFO sliceLine, Object* obj)
+// 사실상 이 클래스의 메인
+// 리턴값으로 나뉜 도형 2개를 배열로 만들어서 리턴
+void Slicetool::Slice(LINE_INFO sliceLine, Object* obj, Object** Dest)
 {
 	LINE_INFO lTemp[MAX_POINT];
 	LINE_INFO* lines = lTemp;
-	GetObjectLineSegment(lines, obj);
+	SetObjectEdges(lines, obj);
+
+	// cl: crossed line
+	// cp: crossed point
+	int cl[2];
+	glm::vec3 cp[2];
+	int idx = 0;
 
 	for (int i = 0; i < obj->GetObjInfo().vCount; i++)
 	{
@@ -23,25 +31,143 @@ void Slicetool::Slice(LINE_INFO sliceLine, Object* obj)
 		else
 		{
 			cout << i << endl;
-			glm::vec3 cp = GetCrossingPoint(sliceLine, param);
-			cout << "Crossing Point: (" << cp[0] << ", " << cp[1] << ", " << cp[2] << ")" << endl;
-			Coord pos = { cp[0], cp[1], cp[2] };
-			
+			cl[idx] = i;
+			cp[idx] = GetCrossingPoint(sliceLine, param);
+			cout << "Crossing Point: (" << cp[idx][0] << ", " << cp[idx][1] << ", " << cp[idx][2] << ")" << endl;
+			if (idx++ == 2)
+				break;
 		}
 	}
-	cout << endl;
+
+	// 지금까지 교점과 지나가는 변을 구했다.
+	// 이제 잘라보도록 하자.
+
+	// 1. 우선 가져갈 정점 인덱스와 나누어질 정점수를 정한다.
+	// 접두사 n은 new
+	int nIdx1[MAX_POINT + 1], nIdx2[MAX_POINT + 1];
+	unsigned int nVcount1, nVcount2;
+	nVcount1 = (cl[1] - cl[0]);
+	nVcount2 = (obj->GetObjInfo().vCount - (cl[1] - cl[0]));
+
+	// 1-1. 큰 변의 인덱스부터 갯수만큼 줄여가며 가져가기
+	for (int i = 0; i < nVcount1; i++)
+	{
+		nIdx1[i] = cl[1] - i;
+		if (nIdx1[i] < 0)
+		{
+			nIdx1[i] += obj->GetObjInfo().vCount;
+		}
+	}
+
+	// 1-2. 작은 변의 인덱스부터 갯수만큼 늘려가며 가져가기
+	for (int i = 0; i < nVcount2; i++)
+	{
+		nIdx2[i] = cl[0] - i;
+		if (nIdx2[i] < 0)
+		{
+			nIdx2[i] += obj->GetObjInfo().vCount;
+		}
+	}
+	// 테스트 출력
+	//	cout << "vCount1: " << nVcount1 << endl;
+	//	cout << "index: ";
+	//	for (int i = 0; i < nVcount1; i++)
+	//	{
+	//		cout << nIdx1[i] << ", ";
+	//	}
+	//	cout << endl;
+	//	
+	//	cout << "vCount2: " << nVcount2 << endl;
+	//	cout << "index: ";
+	//	for (int i = 0; i < nVcount2; i++)
+	//	{
+	//		cout << nIdx2[i] << ", ";
+	//	}
+	//	cout << endl;
+
+	// 2. 1에서 얻은 정보로 버퍼 만들기. 색상버퍼는 공용으로 쓰면 될듯
+	// 2-1. 정점버퍼 만들기
+	glm::vec3 temp1[(MAX_POINT + 1)];
+	glm::vec3* vBuf1 = temp1;
+	glm::vec3 temp2[(MAX_POINT + 1)];
+	glm::vec3* vBuf2 = temp2;
+
+	float* originVbuf = obj->GetObjInfo().vBuffer;
+
+	int vIdx1 = 0;
+	int vIdx2 = 0;
+
+	for (vIdx1 = 0; vIdx1 < nVcount1; vIdx1++)
+	{
+		int oIdx = nIdx1[vIdx1] * 3;
+
+		glm::vec3 vert = { originVbuf[oIdx], originVbuf[oIdx + 1], originVbuf[oIdx + 2] };
+		vBuf1[vIdx1] = vert;
+	}
+	
+	for (vIdx2 = 0; vIdx2 < nVcount2; vIdx2++)
+	{
+		int oIdx = nIdx2[vIdx2] * 3;
+
+		glm::vec3 vert = { originVbuf[oIdx], originVbuf[oIdx + 1], originVbuf[oIdx + 2] };
+		vBuf2[vIdx2] = vert;
+	}
+
+
+	for (int i = 0; i < 2; i++)
+	{
+		glm::vec3 cpvec = { cp[i][0], cp[i][1], cp[i][2] };
+		vBuf1[vIdx1] = cpvec;
+		vBuf2[vIdx2] = cpvec;
+		vIdx1++;
+		vIdx2++;
+	}
+
+	// 2-2. 색상 버퍼 가져오기
+	RGB rgb = obj->GetObjInfo().objColor;
+
+	// 3. 도형 생성, 정점수는 교점이 포함되어 +2
+	Object* newObj[2];
+	Dest[0] = new Object(vBuf1, nVcount1 + 2, rgb, { 0.0f, 0.2f, 0.0f }, 0.8f);
+	Dest[0]->SetObjectStatus(OS_FALLING);
+
+	Dest[1] = new Object(vBuf2, nVcount2 + 2, rgb, { 0.0f, 0.2f, 0.0f }, 0.8f);
+	Dest[1]->SetObjectStatus(OS_FALLING);
+
+
 }
 
-void Slicetool::GetObjectLineSegment(LINE_INFO* segmentBuf, Object* obj)
+bool Slicetool::IntersectCheck(LINE_INFO sliceLine, Object* obj)
+{
+	LINE_INFO lTemp[(MAX_POINT + 1)];
+	LINE_INFO* lines = lTemp;
+	SetObjectEdges(lines, obj);
+	int count = 0;
+
+	for (int i = 0; i < obj->GetObjInfo().vCount; i++)
+	{
+		if (IsIntersect(sliceLine, lines[i]) != -1.0f)
+			count++;
+
+		if (count >= 2)
+			return true;
+	}
+
+	return false;
+}
+
+void Slicetool::SetObjectEdges(LINE_INFO* edgeBuf, Object* obj)
 {
 	LINE_INFO lineList[MAX_POINT];
 	int vCount = obj->GetObjInfo().vCount;
-	float* vBuf = obj->GetVAO().GetVertexBuffer();
+	float* vBuf = obj->GetObjInfo().vBuffer;
+
 	for (int i = 0; i < obj->GetObjInfo().vCount; i++)
 	{
 		int idx = i * 3;
 		cout << vBuf[idx] << ' ' << vBuf[idx + 1] << ' ' << vBuf[idx + 2] << ' ' << endl;
 	}
+
 	for (int i = 0; i < vCount; i++)
 	{
 		int idx = i * 3;
@@ -64,14 +190,10 @@ void Slicetool::GetObjectLineSegment(LINE_INFO* segmentBuf, Object* obj)
 	//	}
 	//	cout << endl;
 
-	copy(lineList, lineList + vCount, segmentBuf);
+	copy(lineList, lineList + vCount, edgeBuf);
 
 }
 
-// p1 = p1.start
-// p2 = p1.end
-// p3 = p2.start
-// p4 = p2.end
 float Slicetool::IsIntersect(LINE_INFO p1, LINE_INFO p2)
 {
 	// 두 선분의 매개변수

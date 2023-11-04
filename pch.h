@@ -28,6 +28,8 @@
 #include "Projection.h"
 
 #include "Core.h"
+#include "TimeManager.h"
 #include "InputManager.h"
 #include "TransformManager.h"
+
 #include "Slicetool.h"

@@ -18,10 +18,15 @@ public:
 
 	void MouseUpdate();
 	void MotionUpdate();
+	void KeyboardUpdate();
 
 	void Render();
+	void MoveUpdate();
 
+	void CheckOutofScreen();
+	void RemoveObject();
 
+	void MakeObjectByTime();
 private:	
 	Camera* cam;
 	Projection* proj;
@@ -30,7 +35,9 @@ private:
 
 	LINE_INFO sliceLine = { {-1.0f, -1.0f, 0.0f}, {-1.0f, -1.0f, 0.0f} };
 
-	Object* obj = nullptr;
+	vector<Object*> objList;
+
+	time_t prevTime = time(nullptr);
 
 };
 

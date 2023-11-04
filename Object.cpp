@@ -1,15 +1,19 @@
 #include "pch.h"
 #include "Object.h"
 
-Object::Object(glm::vec3* vertices, int vCount, RGB rgb)
+Object::Object(glm::vec3* vertices, int vCount, RGB rgb, glm::vec3 startP, float endY)
 {
 	objInfo.objType = static_cast<OBJ_TYPE>(vCount);
 	objInfo.objColor = rgb;
 	objInfo.vCount = vCount;
 	objInfo.pCount = vCount - 2;
+	objInfo.startP = glm::vec3(1.5f, startP[1], 0.0f);
+	objInfo.endP = glm::vec3(-1.5f, endY, 0.0f);
 	// 값 복사를 위한 임시 공간
 	glm::vec3 temp[100];
 	vBuf = temp;
+	memcpy(objInfo.vBuffer, vertices, sizeof(float) * objInfo.vCount * 3);
+	GetCenter();
 	copy(vertices, vertices + vCount, vBuf);
 	CreateFreeObject();
 }
@@ -25,12 +29,12 @@ void Object::CreateFreeObject()
 	SortVertexCCW();
 	
 	// vec3로 받은 정점을 vao에 넣기위해 float로 다시 버퍼 복사
-	float temp[MAX_POINT * 3];		// 가능한 최대 정점수 미리 할당
+	float temp[(MAX_POINT + 1) * 3];		// 가능한 최대 정점수 미리 할당
 	float* vBuff = temp;
 	memcpy(vBuff, vBuf, sizeof(float) * objInfo.vCount * 3);
 
 	// 2. 색상 버퍼 생성
-	float cTemp[MAX_POINT * 3];		// 가능한 최대 정점수 미리 할당
+	float cTemp[(MAX_POINT + 1) * 3];		// 가능한 최대 정점수 미리 할당
 	cBuf = cTemp;
 	for (int i = 0; i < objInfo.vCount; i++)
 	{
@@ -43,7 +47,7 @@ void Object::CreateFreeObject()
 	// 3. 인덱스 버퍼 생성
 	// 3-1. 삼각형의 경우 그냥 {0, 1, 2}로 초기화가 가장 best
 	// 3-2. 그 이상의 경우 정해진 순서대로 버퍼를 채움
-	unsigned int iTemp[(MAX_POINT - 2) * 3];		// 가능한 최대 정점수 미리 할당
+	unsigned int iTemp[(MAX_POINT + 1 - 2) * 3];		// 가능한 최대 정점수 미리 할당
 	idxBuf = iTemp;
 	if (objInfo.vCount <= 3)
 	{
@@ -110,8 +114,84 @@ void Object::SortVertexCCW()
 	vector<glm::vec3>().swap(lower);
 }
 
+void Object::GetCenter()
+{
+	float centerX = 0.0f;
+	float centerY = 0.0f;
+	for (int i = 0; i < objInfo.vCount; i++)
+	{
+		int idx = i * 3;
+		centerX += objInfo.vBuffer[idx];
+		centerY += objInfo.vBuffer[idx + 1];
+	}
+	centerX = centerX / objInfo.vCount;
+	centerY = centerY / objInfo.vCount;
+
+	objInfo.centerPos = { centerX, centerY, 0.0f };
+
+}
+
 void Object::Render()
 {
 	glBindVertexArray(_vao->GetVAOHandle());
 	glDrawElements(GL_TRIANGLES, _vao->GetElementCount(), GL_UNSIGNED_INT, 0);
+}
+
+
+// 떨어질때 사용할 함수
+
+void Object::FlyingUpdate()
+{
+	// parametric equation으로 파라미터가 1.0f가 되면 끝임
+
+	// objInfo.state가 떨어지는 상황이라면 날아가는 속도를 줄여서 0으로 만듬
+	if (objInfo.state == OS_FALLING)
+	{
+		objInfo.flySpeed -= 0.000001f;
+	}
+	objInfo.flyparam += objInfo.flySpeed;
+	glm::vec3 dist = GetFlyingDistance(objInfo.flyparam);
+	objInfo.flyMat = GET_SINGLE(TransformManager).GetTranslateMatrix(dist);
+
+	FinalMatUpdate();
+}
+
+glm::vec3 Object::GetFlyingDistance(float flyparam)
+{
+	float distX = ((1.0f - flyparam) * objInfo.startP[0]) + (flyparam * (objInfo.endP[0]));
+	float distY = ((1.0f - flyparam) * objInfo.startP[1]) + (flyparam * (objInfo.endP[1]));
+
+	return glm::vec3(distX, distY, 0.0f);
+}
+
+void Object::GravityUpdate()
+{
+	objInfo.fallDist -= objInfo.fallSpeed;
+	objInfo.fallMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(0.0f, objInfo.fallDist, 0.0f));
+	objInfo.fallSpeed += 0.0000005f;
+
+	FinalMatUpdate();
+}
+
+void Object::FinalMatUpdate()
+{
+	objInfo.finalMat = objInfo.flyMat * objInfo.fallMat;
+	vBufferUpdate();
+}
+
+void Object::vBufferUpdate()
+{
+	for (int i = 0; i < objInfo.vCount; i++)
+	{
+		int vidx = i * 3;
+		float* vBuff = _vao->GetVertexBuffer();
+		glm::vec4 vTemp = glm::vec4(vBuff[vidx], vBuff[vidx + 1], vBuff[vidx + 2], 1.0f);
+		vTemp = objInfo.finalMat * vTemp;
+		objInfo.vBuffer[vidx] = vTemp[0];
+		objInfo.vBuffer[vidx + 1] = vTemp[1];
+		objInfo.vBuffer[vidx + 2] = vTemp[2];
+	}
+
+	// 하는김에 중심점도 업데이트
+	GetCenter();
 }
