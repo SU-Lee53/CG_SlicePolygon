@@ -106,9 +106,7 @@ void SliceMain::Render()
 	if (sliceLine.end.x != -1.0f)
 		DrawLine(sliceLine.start, sliceLine.end);
 
-	// 현재해야할일
-	// 1. 정점만으로 Object 만드는 클래스 구현
-	// 2. 이를 위한 정점 반시계 정렬 구현 -> 중심점을 만들고 사분면별로 가져와서 버퍼에 넣으면?
+	
 }
 
 
