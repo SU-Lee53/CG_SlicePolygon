@@ -130,11 +130,36 @@ void Slicetool::Slice(LINE_INFO sliceLine, Object* obj, Object** Dest)
 	Object* newObj[2];
 	Dest[0] = new Object(vBuf1, nVcount1 + 2, rgb, { 0.0f, 0.2f, 0.0f }, 0.8f);
 	Dest[0]->SetObjectStatus(OS_FALLING);
+	Dest[0]->SetFlyDist(obj->GetObjInfo().flyDist);
+	Dest[0]->SetFallDist(obj->GetObjInfo().fallDist);
+	Dest[0]->SetFlyParam(obj->GetObjInfo().flyParam);
 
 	Dest[1] = new Object(vBuf2, nVcount2 + 2, rgb, { 0.0f, 0.2f, 0.0f }, 0.8f);
 	Dest[1]->SetObjectStatus(OS_FALLING);
+	Dest[1]->SetFlyDist(obj->GetObjInfo().flyDist);
+	Dest[1]->SetFallDist(obj->GetObjInfo().fallDist);
+	Dest[1]->SetFlyParam(obj->GetObjInfo().flyParam);
 
+	// 살짝 튕겨져 날아갈 방향을 정함
+	int dir1 = 0, dir2= 0;
+	for (int i = 0; i < nVcount1; i++)
+	{
+		if (nIdx1[i] == 0)
+		{
+			dir1 = 1;
+			dir2 = -1;
+			break;
+		}
+	}
 
+	if (dir1 != 1)
+	{
+		dir1 = -1;
+		dir2 = 1;
+	}
+
+	Dest[0]->SetMoveDirection(dir1);
+	Dest[1]->SetMoveDirection(dir2);
 }
 
 bool Slicetool::IntersectCheck(LINE_INFO sliceLine, Object* obj)

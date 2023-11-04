@@ -17,7 +17,7 @@ void TimeManager::SetPrevFrameTime()
 
 time_t TimeManager::GetCurrentFrameTime()
 {
-	return time_t(nullptr);
+	return time(nullptr);
 }
 
 time_t TimeManager::GetDeltaTime()

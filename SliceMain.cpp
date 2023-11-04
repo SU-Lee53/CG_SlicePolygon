@@ -132,7 +132,7 @@ void SliceMain::KeyboardUpdate()
 
 void SliceMain::Render()
 {
-	GET_SINGLE(TimeManager).;
+	GET_SINGLE(TimeManager).SetPrevFrameTime();
 
 	if (objList.size() != 0)
 	{
@@ -174,7 +174,7 @@ void SliceMain::CheckOutofScreen()
 	for (int i = 0; i < objList.size(); i++)
 	{
 		float lparam, ydist;
-		lparam = objList.at(i)->GetObjInfo().flyparam;
+		lparam = objList.at(i)->GetObjInfo().flyParam;
 		ydist = objList.at(i)->GetObjInfo().fallDist;
 		if (lparam >= 1.0f || ydist <= -2.0f)
 		{

@@ -35,15 +35,17 @@ struct OBJ_INFO
 	// 날아갈때 사용할 변수들
 	glm::vec3 startP = glm::vec3(1.0f);
 	glm::vec3 endP = glm::vec3(1.0f);
-	float flyparam = 0.0f;
+	glm::vec3 flyDist = glm::vec3(1.0f);
+	float flyParam = 0.0f;
 	float flySpeed = 0.0001f;
 	glm::mat4 flyMat = glm::mat4(1.0f);
 
 
 	// 떨어질때 사용할 변수들
 	float fallDist = 0.0f;
-	float fallSpeed = (static_cast<float>(rand()) / RAND_MAX) * 0.0001;
+	float fallSpeed = (static_cast<float>(rand()) / (RAND_MAX / 5)) * 0.0001;
 	glm::mat4 fallMat = glm::mat4(1.0f);
+	int moveDirection = 0;	// 잘렸을때 해당 방향으로 살짝 움직이며 떨어짐
 
 	// 최종 변환 행렬
 	glm::mat4 finalMat = glm::mat4(1.0f);
@@ -63,7 +65,10 @@ public:
 	glm::vec3* GetVertexBuf() { return vBuf; }
 	VAO& GetVAO() { return *_vao; }
 	void SetObjectStatus(OBJ_STATUS status) { objInfo.state = status; }
-	
+	void SetFlyDist(glm::vec3 dist) { objInfo.flyDist = dist; }
+	void SetFallDist(float dist) { objInfo.fallDist = dist; }
+	void SetMoveDirection(int dir) { objInfo.moveDirection = dir; }
+	void SetFlyParam(float param) { objInfo.flyParam = param; }
 	// 이동
 	void FlyingUpdate();
 	void GravityUpdate();
@@ -84,7 +89,7 @@ private:
 	}
 
 	void GetCenter();
-	glm::vec3 GetFlyingDistance(float flyparam);
+	glm::vec3 GetFlyingDistance(float flyParam);
 
 	void FinalMatUpdate();
 	void vBufferUpdate();

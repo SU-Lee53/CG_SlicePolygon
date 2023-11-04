@@ -1,6 +1,7 @@
 #pragma once
 class TimeManager
 {
+public:
 	static TimeManager& GetInstance()
 	{
 		static TimeManager instance;

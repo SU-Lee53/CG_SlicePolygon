@@ -144,24 +144,19 @@ void Object::FlyingUpdate()
 {
 	// parametric equation으로 파라미터가 1.0f가 되면 끝임
 
-	// objInfo.state가 떨어지는 상황이라면 날아가는 속도를 줄여서 0으로 만듬
-	if (objInfo.state == OS_FALLING)
-	{
-		objInfo.flySpeed -= 0.000001f;
-	}
-	objInfo.flyparam += objInfo.flySpeed;
-	glm::vec3 dist = GetFlyingDistance(objInfo.flyparam);
+	objInfo.flyParam += objInfo.flySpeed;
+	glm::vec3 dist = GetFlyingDistance(objInfo.flyParam);
 	objInfo.flyMat = GET_SINGLE(TransformManager).GetTranslateMatrix(dist);
 
 	FinalMatUpdate();
 }
 
-glm::vec3 Object::GetFlyingDistance(float flyparam)
+glm::vec3 Object::GetFlyingDistance(float flyParam)
 {
-	float distX = ((1.0f - flyparam) * objInfo.startP[0]) + (flyparam * (objInfo.endP[0]));
-	float distY = ((1.0f - flyparam) * objInfo.startP[1]) + (flyparam * (objInfo.endP[1]));
-
-	return glm::vec3(distX, distY, 0.0f);
+	objInfo.flyDist[0] = ((1.0f - flyParam) * objInfo.startP[0]) + (flyParam * (objInfo.endP[0]));
+	objInfo.flyDist[1] = ((1.0f - flyParam) * objInfo.startP[1]) + (flyParam * (objInfo.endP[1]));
+	
+	return glm::vec3(objInfo.flyDist[0], objInfo.flyDist[1], 0.0f);
 }
 
 void Object::GravityUpdate()
