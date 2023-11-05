@@ -95,6 +95,9 @@
     <ClInclude Include="VBO.h">
       <Filter>소스 파일\VAO,VBO</Filter>
     </ClInclude>
+    <ClInclude Include="Basket.h">
+      <Filter>소스 파일\Object</Filter>
+    </ClInclude>
     <ClInclude Include="TimeManager.h">
       <Filter>소스 파일\Manager</Filter>
     </ClInclude>
@@ -141,6 +144,9 @@
     </ClCompile>
     <ClCompile Include="VAO.cpp">
       <Filter>소스 파일\VAO,VBO</Filter>
+    </ClCompile>
+    <ClCompile Include="Basket.cpp">
+      <Filter>소스 파일\Object</Filter>
     </ClCompile>
     <ClCompile Include="TimeManager.cpp">
       <Filter>소스 파일\Manager</Filter>

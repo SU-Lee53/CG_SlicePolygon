@@ -1,27 +1,27 @@
 #include "pch.h"
 #include "TimeManager.h"
 
-TimeManager::TimeManager()
+void TimeManager::Init()
 {
-	prevFrameTime = time(nullptr);
+	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&_frequency));
+	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&_prevCount));	//CPUÅ¬·°
 }
 
-TimeManager::~TimeManager()
+void TimeManager::Update()
 {
-}
+	long long currentCount;
+	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));
 
-void TimeManager::SetPrevFrameTime()
-{
-	prevFrameTime = time(nullptr);
-}
+	_deltaTime = (currentCount - _prevCount) / static_cast<float>(_frequency);
+	_prevCount = currentCount;
 
-time_t TimeManager::GetCurrentFrameTime()
-{
-	return time(nullptr);
-}
+	_frameCount++;
+	_frameTime += _deltaTime;
 
-time_t TimeManager::GetDeltaTime()
-{
-	return time(nullptr) - prevFrameTime;
-}
+	if (_frameTime >= 1.f) {
+		_fps = static_cast<int>(_frameCount / _frameTime);
 
+		_frameTime = 0.f;
+		_frameCount = 0;
+	}
+}

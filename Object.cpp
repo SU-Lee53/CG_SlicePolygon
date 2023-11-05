@@ -80,41 +80,63 @@ void Object::SortVertexCCW()
 	// 2. 중심점보다 y축으로 윗부분과 아랫부분을 나눈다.
 	// 3. 윗부분은 x축 내림차순, 아랫부분은 오름차순으로 연결한다.
 	// 4. 두 배열을 합친다.
-
-	// 1. 중심점을 구한다. y값의 중심만 구하면 될듯함
-	float middleY = 0.0;
+	// **수정: 아래 정점을 나누고 정렬하는 부분을 위아래로만 하지 않고 사분면으로 나눠야 정상적으로 작동할것으로 보임
+	
+	// 1. 중심점을 구한다.
+	float middleX = 0.0f;
+	float middleY = 0.0f;
 	for (int i = 0; i < objInfo.vCount; i++)
 	{
+		middleX += vBuf[i][0];
 		middleY += vBuf[i][1];
 	}
+	middleX = middleX / objInfo.vCount;
 	middleY = middleY / objInfo.vCount;
 	GetCenter();
 
-	// 2. 중심점보다 윗부분과 아랫부분을 나눈다
-	vector<glm::vec3> upper;
-	vector<glm::vec3> lower;
-	
+	// 2. 중심점 기준 사분면으로 나눈다
+
+	vector<glm::vec3> quad1;
+	vector<glm::vec3> quad2;
+	vector<glm::vec3> quad3;
+	vector<glm::vec3> quad4;
+
 	for (int i = 0; i < objInfo.vCount; i++)
 	{
-		if (vBuf[i][1] >= middleY)
-			upper.push_back(vBuf[i]);
-		else
-			lower.push_back(vBuf[i]);
+		if (vBuf[i][0] >= middleX && vBuf[i][1] >= middleY)
+			quad1.push_back(vBuf[i]);
+		else if (vBuf[i][0] < middleX && vBuf[i][1] >= middleY)
+			quad2.push_back(vBuf[i]);
+		else if (vBuf[i][0] <= middleX && vBuf[i][1] < middleY)
+			quad3.push_back(vBuf[i]);
+		else if (vBuf[i][0] > middleX && vBuf[i][1] < middleY)
+			quad4.push_back(vBuf[i]);
 	}
 
-	// 3. 윗부분은 x축 내림차순, 아랫부분은 오름차순으로 연결한다.
-	sort(upper.begin(), upper.end(), Object::CompareDescendingX);
-	sort(lower.begin(), lower.end(), Object::CompareAscendingX);
+	// 3. 사분면별 정렬을 수행
+	// 3-1. 1사분면: x축 내림차순, 값이 같으면 y축 오름차순
+	// 3-2. 2사분면: x축 내림차순, 값이 같으면 y축 내림차순
+	// 3-3. 3사분면: x축 오름차순, 값이 같으면 y축 내림차순
+	// 3-4. 4사분면: x축 오름차순, 값이 같으면 y축 오름차순
+	
+	sort(quad1.begin(), quad1.end(), Object::CompareQuad1);
+	sort(quad2.begin(), quad2.end(), Object::CompareQuad2);
+	sort(quad3.begin(), quad3.end(), Object::CompareQuad3);
+	sort(quad4.begin(), quad4.end(), Object::CompareQuad4);
 
 	// 4. 원래 배열에 합친다. copy로 복사
-	upper.insert(upper.end(), lower.begin(), lower.end());
-	copy(upper.begin(), upper.end(), vBuf);
+	quad1.insert(quad1.end(), quad2.begin(), quad2.end());
+	quad1.insert(quad1.end(), quad3.begin(), quad3.end());
+	quad1.insert(quad1.end(), quad4.begin(), quad4.end());
+	copy(quad1.begin(), quad1.end(), vBuf);
 	memcpy(objInfo.vBuffer, vBuf, sizeof(float) * objInfo.vCount * 3);
 
 
 	// 벡터 메모리 헤제
-	vector<glm::vec3>().swap(upper);
-	vector<glm::vec3>().swap(lower);
+	vector<glm::vec3>().swap(quad1);
+	vector<glm::vec3>().swap(quad2);
+	vector<glm::vec3>().swap(quad3);
+	vector<glm::vec3>().swap(quad4);
 }
 
 void Object::GetCenter()
@@ -140,16 +162,20 @@ void Object::Render()
 	glDrawElements(GL_TRIANGLES, _vao->GetElementCount(), GL_UNSIGNED_INT, 0);
 }
 
-
-// 떨어질때 사용할 함수
+// 날아갈때 사용할 함수
 
 void Object::FlyingUpdate()
 {
+	deltaT = GET_SINGLE(TimeManager).GetDeltaTime();
+	// 날아가기
 	// parametric equation으로 파라미터가 1.0f가 되면 끝임
-
-	objInfo.flyParam += objInfo.flySpeed;
+	objInfo.flyParam += objInfo.flySpeed * deltaT;
 	glm::vec3 dist = GetFlyingDistance(objInfo.flyParam);
 	objInfo.flyMat = GET_SINGLE(TransformManager).GetTranslateMatrix(dist);
+
+	// 회전하기
+	objInfo.rotDeg += objInfo.rotSpeed * deltaT;
+	objInfo.rotMat = GET_SINGLE(TransformManager).GetRotateMatrix(objInfo.rotDeg, Z_AXIS);
 
 	FinalMatUpdate();
 }
@@ -162,29 +188,41 @@ glm::vec3 Object::GetFlyingDistance(float flyParam)
 	return glm::vec3(objInfo.flyDist[0], objInfo.flyDist[1], 0.0f);
 }
 
+// 떨어질때 사용할 함수
+
 void Object::GravityUpdate()
 {
-	objInfo.fallDist -= objInfo.fallSpeed;
+	deltaT = GET_SINGLE(TimeManager).GetDeltaTime();
+
+	objInfo.fallDist -= objInfo.fallSpeed * deltaT;
 	objInfo.fallMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(0.0f, objInfo.fallDist, 0.0f));
-	objInfo.fallSpeed += 0.0000005f;
+	objInfo.fallSpeed += 0.001f;
 	
+	FinalMatUpdate();
+}
+
+void Object::InBasketUpdate(Basket* basket)
+{
+	deltaT = GET_SINGLE(TimeManager).GetDeltaTime();
+	objInfo.ibMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(basket->GetBasketMoveDist(), objInfo.flyDist[1] - (-objInfo.fallDist), 0.0f));
+
 	FinalMatUpdate();
 }
 
 void Object::FinalMatUpdate()
 {
-	objInfo.finalMat = objInfo.flyMat * objInfo.fallMat;
-	vBufferUpdate();
+	objInfo.finalMat = objInfo.ibMat * objInfo.flyMat * objInfo.fallMat * objInfo.rotMat;
+	vBufferUpdate(objInfo.finalMat);
 }
 
-void Object::vBufferUpdate()
+void Object::vBufferUpdate(glm::mat4 matrix)
 {
 	for (int i = 0; i < objInfo.vCount; i++)
 	{
 		int vidx = i * 3;
 		float* vBuff = _vao->GetVertexBuffer();
 		glm::vec4 vTemp = glm::vec4(vBuff[vidx], vBuff[vidx + 1], vBuff[vidx + 2], 1.0f);
-		vTemp = objInfo.finalMat * vTemp;
+		vTemp = matrix * vTemp;
 		objInfo.vBuffer[vidx] = vTemp[0];
 		objInfo.vBuffer[vidx + 1] = vTemp[1];
 		objInfo.vBuffer[vidx + 2] = vTemp[2];

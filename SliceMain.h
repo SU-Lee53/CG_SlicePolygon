@@ -1,4 +1,7 @@
 #pragma once
+#include "Basket.h"
+
+class Slicetool;
 
 struct LINE_INFO
 {
@@ -27,6 +30,8 @@ public:
 	void RemoveObject();
 
 	void MakeObjectByTime();
+
+	vector<Object*> GetObjList() { return objList; }
 private:	
 	Camera* cam;
 	Projection* proj;
@@ -36,6 +41,7 @@ private:
 	LINE_INFO sliceLine = { {-1.0f, -1.0f, 0.0f}, {-1.0f, -1.0f, 0.0f} };
 
 	vector<Object*> objList;
+	Basket* basket = nullptr;
 
 	time_t prevTime = time(nullptr);
 

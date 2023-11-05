@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Shaders.h"
-using namespace std;
 
 Shaders::Shaders()
 {

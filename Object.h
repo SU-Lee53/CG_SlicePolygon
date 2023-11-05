@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include "Basket.h"
 
 const int MAX_POINT = 30;
 
@@ -15,6 +16,7 @@ enum OBJ_STATUS
 {
 	OS_FLYING = 0,
 	OS_FALLING,
+	OS_IN_BASKET,
 	OS_OUT
 };
 
@@ -37,15 +39,24 @@ struct OBJ_INFO
 	glm::vec3 endP = glm::vec3(1.0f);
 	glm::vec3 flyDist = glm::vec3(1.0f);
 	float flyParam = 0.0f;
-	float flySpeed = 0.0001f;
+	float flySpeed = 0.3f;
 	glm::mat4 flyMat = glm::mat4(1.0f);
+
+	// 돌면서 날아갈때 사용할 변수
+	float rotDeg = 0.0f;
+	float rotSpeed = 100.0f;
+	glm::mat4 rotMat = glm::mat4(1.0f);
 
 
 	// 떨어질때 사용할 변수들
 	float fallDist = 0.0f;
-	float fallSpeed = (static_cast<float>(rand()) / (RAND_MAX / 7)) * 0.0001;
+	float fallSpeed = (static_cast<float>(rand()) / (RAND_MAX / 7)) * 0.1;
 	glm::mat4 fallMat = glm::mat4(1.0f);
 	int moveDirection = 0;	// 잘렸을때 해당 방향으로 살짝 움직이며 떨어짐
+
+	// 바구니에 떨어졌을때 사용할 변수들
+	float yDist = 0.0f;
+	glm::mat4 ibMat = glm::mat4(1.0f);
 
 	// 최종 변환 행렬
 	glm::mat4 finalMat = glm::mat4(1.0f);
@@ -69,9 +80,12 @@ public:
 	void SetFallDist(float dist) { objInfo.fallDist = dist; }
 	void SetMoveDirection(int dir) { objInfo.moveDirection = dir; }
 	void SetFlyParam(float param) { objInfo.flyParam = param; }
+	void SetInBasketYpos(float posY) { objInfo.yDist = posY; }
 	// 이동
 	void FlyingUpdate();
 	void GravityUpdate();
+	void InBasketUpdate(Basket* basket);
+	void vBufferUpdate(glm::mat4 matrix);
 
 private:
 	// 자유 도형 생성
@@ -79,26 +93,11 @@ private:
 
 	// 정점 정렬
 	void SortVertexCCW();
-	static bool CompareAscendingX(const glm::vec3 a, const glm::vec3 b)
+	static bool CompareQuad1(const glm::vec3 a, const glm::vec3 b)
 	{
-		if (a[0] <= b[0])
+		if (a[0] > b[0] || ((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
 		{
-			if (a[0] == b[0])
-			{
-				return a[1] > b[1];
-			}
-			else
-			{
-				return a[0] < b[0];
-			}
-		}
-		return false;
-	}
-	static bool CompareDescendingX(const glm::vec3 a, const glm::vec3 b)
-	{
-		if (a[0] >= b[0])
-		{
-			if (a[0] == b[0])
+			if (((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
 			{
 				return a[1] < b[1];
 			}
@@ -107,15 +106,61 @@ private:
 				return a[0] > b[0];
 			}
 		}
-		return false;
+		return  a[0] > b[0];
+	}
+	
+	static bool CompareQuad2(const glm::vec3 a, const glm::vec3 b)
+	{
+		if (a[0] > b[0] || ((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
+		{
+			if (((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
+			{
+				return a[1] > b[1];
+			}
+			else
+			{
+				return a[0] > b[0];
+			}
+		}
+		return  a[0] > b[0];
+	}
+
+	static bool CompareQuad3(const glm::vec3 a, const glm::vec3 b)
+	{
+		if (a[0] < b[0] || ((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
+		{
+			if (((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
+			{
+				return a[1] > b[1];
+			}
+			else
+			{
+				return a[0] < b[0];
+			}
+		}
+		return a[0] < b[0];
+	}
+	
+	static bool CompareQuad4(const glm::vec3 a, const glm::vec3 b)
+	{
+		if (a[0] < b[0] || ((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
+		{
+			if (((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
+			{
+				return a[1] < b[1];
+			}
+			else
+			{
+				return a[0] < b[0];
+			}
+		}
+		return a[0] < b[0];
 	}
 
 	void GetCenter();
 	glm::vec3 GetFlyingDistance(float flyParam);
 
 	void FinalMatUpdate();
-	void vBufferUpdate();
-
 private:
 
 	VAO* _vao = nullptr;
@@ -124,6 +169,6 @@ private:
 	unsigned int* idxBuf;
 
 	OBJ_INFO objInfo;
-
+	float deltaT = 0.0f;
 };
 

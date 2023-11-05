@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Slicetool.h"
 
+struct LINE_INFO;
+
 Slicetool::Slicetool()
 {
 }
@@ -19,8 +21,8 @@ void Slicetool::Slice(LINE_INFO sliceLine, Object* obj, Object** Dest)
 
 	// cl: crossed line
 	// cp: crossed point
-	int cl[2];
-	glm::vec3 cp[2];
+	int cl[3];
+	glm::vec3 cp[3];
 	int idx = 0;
 
 	for (int i = 0; i < obj->GetObjInfo().vCount; i++)

@@ -8,16 +8,21 @@ public:
 		return instance;
 	}
 
+	void Init();
+	void Update();
 
-	void SetPrevFrameTime();
-	time_t GetCurrentFrameTime();
-	time_t GetDeltaTime();
-
+	int GetFps() { return _fps; }
+	float GetDeltaTime() { return _deltaTime; }
 
 private:
-	TimeManager();
-	~TimeManager();
+	long long _frequency = 0;
+	long long _prevCount = 0;
+	float _deltaTime = 0.f;
 
-	time_t prevFrameTime = 0;
+private:
+	int _frameCount = 0;
+	float _frameTime = 0.f;
+	int _fps = 0;
+
 };
 

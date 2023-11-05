@@ -15,6 +15,7 @@ void SliceMain::init()
 	srand(time(0));
 	cam = new Camera(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.0f, 0.f));
 	proj = new Projection(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f);
+	GET_SINGLE(TimeManager).Init();
 }
 
 void SliceMain::drawScene()
@@ -31,12 +32,17 @@ void SliceMain::drawScene()
 	MouseUpdate();
 	MotionUpdate();
 	KeyboardUpdate();
+	GET_SINGLE(TimeManager).Update();
 	if(objList.size() != 0)
 	{
 		MoveUpdate();
 
 		CheckOutofScreen();
 		RemoveObject();
+	}
+	if (basket != nullptr)
+	{
+		basket->Update(objList);
 	}
 
 
@@ -49,6 +55,7 @@ void SliceMain::drawScene()
 
 void SliceMain::Reshape(int w, int h)
 {
+	glViewport(0, 0, w, h);
 }
 
 void SliceMain::MouseUpdate()
@@ -132,7 +139,11 @@ void SliceMain::KeyboardUpdate()
 
 void SliceMain::Render()
 {
-	GET_SINGLE(TimeManager).SetPrevFrameTime();
+
+	if (basket == nullptr)
+	{
+		basket = new Basket();
+	}
 
 	if (objList.size() != 0)
 	{
@@ -140,7 +151,6 @@ void SliceMain::Render()
 		{
 			GET_SINGLE(TransformManager).Bind(worldMat * objList.at(i)->GetObjInfo().finalMat, shaderID);
 			objList.at(i)->Render();
-
 		}
 	}
 
@@ -152,7 +162,11 @@ void SliceMain::Render()
 		DrawLine(sliceLine.start, sliceLine.end);
 	}
 
-	
+	if (basket != nullptr)
+	{
+		GET_SINGLE(TransformManager).Bind(worldMat * basket->GetBasketMat(), shaderID);
+		basket->Render();
+	}
 }
 
 void SliceMain::MoveUpdate()
@@ -163,8 +177,14 @@ void SliceMain::MoveUpdate()
 		{
 			objList.at(i)->GravityUpdate();
 		}
-		else
+		else if (objList.at(i)->GetObjInfo().state == OS_FLYING)
+		{
 			objList.at(i)->FlyingUpdate();
+		}
+		else if (objList.at(i)->GetObjInfo().state == OS_IN_BASKET)
+		{
+			objList.at(i)->InBasketUpdate(basket);
+		}
 	}
 
 
@@ -202,7 +222,7 @@ void SliceMain::MakeObjectByTime()
 	// 1초에 1번씩
 	if (currentTime - prevTime >= 2)
 	{
-		int objType = rand() % 3 + 4;
+		int objType = rand() % 4 + 3;
 		glm::vec3* vtx = nullptr;
 
 		switch (objType)
@@ -254,6 +274,7 @@ void SliceMain::MakeObjectByTime()
 				glm::vec3(-0.1, -0.2f, 0.0f),
 			};
 			vtx = temp;
+			break;
 		}
 		}
 		RGB rgb = GetRandomRGB();
@@ -261,6 +282,8 @@ void SliceMain::MakeObjectByTime()
 		float endY = static_cast<float>(rand()) / RAND_MAX;
 		objList.push_back(new Object(vtx, objType, rgb, startP, endY));
 		prevTime = currentTime;
+
+		objList.shrink_to_fit();
 	}
 
 

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Basket.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="InputManager.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="__struct.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Basket.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="InputManager.cpp" />
