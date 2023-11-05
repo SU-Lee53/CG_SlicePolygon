@@ -43,7 +43,7 @@ struct OBJ_INFO
 
 	// 떨어질때 사용할 변수들
 	float fallDist = 0.0f;
-	float fallSpeed = (static_cast<float>(rand()) / (RAND_MAX / 5)) * 0.0001;
+	float fallSpeed = (static_cast<float>(rand()) / (RAND_MAX / 7)) * 0.0001;
 	glm::mat4 fallMat = glm::mat4(1.0f);
 	int moveDirection = 0;	// 잘렸을때 해당 방향으로 살짝 움직이며 떨어짐
 
@@ -81,11 +81,33 @@ private:
 	void SortVertexCCW();
 	static bool CompareAscendingX(const glm::vec3 a, const glm::vec3 b)
 	{
-		return a[0] < b[0];
+		if (a[0] <= b[0])
+		{
+			if (a[0] == b[0])
+			{
+				return a[1] > b[1];
+			}
+			else
+			{
+				return a[0] < b[0];
+			}
+		}
+		return false;
 	}
 	static bool CompareDescendingX(const glm::vec3 a, const glm::vec3 b)
 	{
-		return a[0] > b[0];
+		if (a[0] >= b[0])
+		{
+			if (a[0] == b[0])
+			{
+				return a[1] < b[1];
+			}
+			else
+			{
+				return a[0] > b[0];
+			}
+		}
+		return false;
 	}
 
 	void GetCenter();

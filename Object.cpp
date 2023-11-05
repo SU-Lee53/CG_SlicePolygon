@@ -88,6 +88,7 @@ void Object::SortVertexCCW()
 		middleY += vBuf[i][1];
 	}
 	middleY = middleY / objInfo.vCount;
+	GetCenter();
 
 	// 2. 중심점보다 윗부분과 아랫부분을 나눈다
 	vector<glm::vec3> upper;
@@ -108,6 +109,8 @@ void Object::SortVertexCCW()
 	// 4. 원래 배열에 합친다. copy로 복사
 	upper.insert(upper.end(), lower.begin(), lower.end());
 	copy(upper.begin(), upper.end(), vBuf);
+	memcpy(objInfo.vBuffer, vBuf, sizeof(float) * objInfo.vCount * 3);
+
 
 	// 벡터 메모리 헤제
 	vector<glm::vec3>().swap(upper);
@@ -164,7 +167,7 @@ void Object::GravityUpdate()
 	objInfo.fallDist -= objInfo.fallSpeed;
 	objInfo.fallMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(0.0f, objInfo.fallDist, 0.0f));
 	objInfo.fallSpeed += 0.0000005f;
-
+	
 	FinalMatUpdate();
 }
 

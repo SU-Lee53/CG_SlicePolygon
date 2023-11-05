@@ -144,6 +144,7 @@ void SliceMain::Render()
 		}
 	}
 
+	GET_SINGLE(TransformManager).Bind(worldMat, shaderID);
 
 	if (sliceLine.start.x != -1.0f && sliceLine.start.y != -1.0f && sliceLine.end.x != -1.0f && sliceLine.end.y != -1.0f)
 	{

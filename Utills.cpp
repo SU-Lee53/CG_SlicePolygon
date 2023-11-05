@@ -73,10 +73,8 @@ void DrawAxis(float length)
 
 void DrawLine(Coord start, Coord end)
 {
-	glLineWidth(3.0f);
 	glBegin(GL_LINES);
 	
-
 	glVertex3f(start.x, start.y, 0.0);
 	glVertex3f(end.x, end.y, 0.0);
 
