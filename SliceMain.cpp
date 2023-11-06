@@ -222,7 +222,8 @@ void SliceMain::MakeObjectByTime()
 	// 1초에 1번씩
 	if (currentTime - prevTime >= 2)
 	{
-		int objType = rand() % 4 + 3;
+		// int objType = rand() % 4 + 3;
+		int objType = 6;
 		glm::vec3* vtx = nullptr;
 
 		switch (objType)
@@ -230,9 +231,9 @@ void SliceMain::MakeObjectByTime()
 		case 3:
 		{
 			glm::vec3 temp[] = {
-				glm::vec3(0.0f, 0.2f, 0.0f),
-				glm::vec3(0.2f, -0.2f, 0.0f),
-				glm::vec3(-0.2, -0.2f, 0.0f),
+				glm::vec3(0.0f, 0.1f, 0.0f),
+				glm::vec3(0.1f, -0.1f, 0.0f),
+				glm::vec3(-0.1, -0.1f, 0.0f),
 			};
 			vtx = temp;
 			break;
@@ -241,10 +242,10 @@ void SliceMain::MakeObjectByTime()
 		case 4:
 		{
 			glm::vec3 temp[] = {
-				glm::vec3(0.2f, 0.2f, 0.0f),
-				glm::vec3(-0.2f, 0.2f, 0.0f),
-				glm::vec3(0.2f, -0.2f, 0.0f),
-				glm::vec3(-0.2, -0.2f, 0.0f),
+				glm::vec3(0.1f, 0.1f, 0.0f),
+				glm::vec3(-0.1f, 0.1f, 0.0f),
+				glm::vec3(0.1f, -0.1f, 0.0f),
+				glm::vec3(-0.1, -0.1f, 0.0f),
 			};
 			vtx = temp;
 			break;
@@ -253,11 +254,11 @@ void SliceMain::MakeObjectByTime()
 		case 5:
 		{
 			glm::vec3 temp[] = {
-				glm::vec3(0.0f, 0.2f, 0.0f),
-				glm::vec3(0.2f, 0.05f, 0.0f),
-				glm::vec3(-0.2f, 0.05f, 0.0f),
-				glm::vec3(-0.13f, -0.2f, 0.0f),
-				glm::vec3(0.13f, -0.2f, 0.0f)
+				glm::vec3(0.0f, 0.1f, 0.0f),
+				glm::vec3(0.1f, 0.0f, 0.0f),
+				glm::vec3(-0.1f, 0.0f, 0.0f),
+				glm::vec3(-0.05f, -0.1f, 0.0f),
+				glm::vec3(0.05f, -0.1f, 0.0f)
 			};
 			vtx = temp;
 			break;
@@ -266,12 +267,12 @@ void SliceMain::MakeObjectByTime()
 		case 6:
 		{
 			glm::vec3 temp[] = {
-				glm::vec3(0.1f, 0.2f, 0.0f),
-				glm::vec3(-0.1f, 0.2f, 0.0f),
-				glm::vec3(0.2f, 0.0f, 0.0f),
-				glm::vec3(-0.2f, 0.0f, 0.0f),
-				glm::vec3(0.1f, -0.2f, 0.0f),
-				glm::vec3(-0.1, -0.2f, 0.0f),
+				glm::vec3(0.05f, 0.1f, 0.0f),
+				glm::vec3(-0.05f, 0.1f, 0.0f),
+				glm::vec3(0.1f, 0.0f, 0.0f),
+				glm::vec3(-0.1f, 0.0f, 0.0f),
+				glm::vec3(0.05f, -0.1f, 0.0f),
+				glm::vec3(-0.05f, -0.1f, 0.0f),
 			};
 			vtx = temp;
 			break;

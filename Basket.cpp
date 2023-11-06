@@ -130,7 +130,7 @@ bool Basket::TouchedCheck(AABB p1, AABB p2)
 {
 	if (p1.right > p2.left && p2.right > p1.left)
 	{
-		if (p2.bottom - p1.top <= 0.005f && p2.bottom - p1.top >= 0)
+		if (p2.bottom - p1.top <= 0.01f && p2.bottom - p1.top >= 0)
 		{
 			return true;
 		}

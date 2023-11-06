@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Object.h"
 
+glm::vec3 Object::standardP = glm::vec3(0.0f, 0.0f, 0.0f);
+
 Object::Object(glm::vec3* vertices, int vCount, RGB rgb, glm::vec3 startP, float endY)
 {
 	objInfo.objType = static_cast<OBJ_TYPE>(vCount);
@@ -73,70 +75,44 @@ void Object::CreateFreeObject()
 
 void Object::SortVertexCCW()
 {
-	// 올바르게 정렬될수 있는 조건: 도형이 반드시 볼록해야함, 오목한 부분이 있다면 정렬 불가
-	
-	// 정렬 방법
-	// 1. 모든 정점의 중심점(평균)을 구한다.
-	// 2. 중심점보다 y축으로 윗부분과 아랫부분을 나눈다.
-	// 3. 윗부분은 x축 내림차순, 아랫부분은 오름차순으로 연결한다.
-	// 4. 두 배열을 합친다.
-	// **수정: 아래 정점을 나누고 정렬하는 부분을 위아래로만 하지 않고 사분면으로 나눠야 정상적으로 작동할것으로 보임
-	
-	// 1. 중심점을 구한다.
-	float middleX = 0.0f;
-	float middleY = 0.0f;
-	for (int i = 0; i < objInfo.vCount; i++)
+	Object::standardP = vBuf[0];
+	sort(vBuf + 1, vBuf + objInfo.vCount, Object::Compare);
+}
+
+bool Object::Compare(const glm::vec3 p1, const glm::vec3 p2)
+{
+	int direction = IsCCW(Object::standardP, p1, p2);
+
+	if (direction == 0)
 	{
-		middleX += vBuf[i][0];
-		middleY += vBuf[i][1];
+		return (GetDist(Object::standardP, p1) < GetDist(Object::standardP, p2));
 	}
-	middleX = middleX / objInfo.vCount;
-	middleY = middleY / objInfo.vCount;
-	GetCenter();
-
-	// 2. 중심점 기준 사분면으로 나눈다
-
-	vector<glm::vec3> quad1;
-	vector<glm::vec3> quad2;
-	vector<glm::vec3> quad3;
-	vector<glm::vec3> quad4;
-
-	for (int i = 0; i < objInfo.vCount; i++)
+	else if (direction == 1)
 	{
-		if (vBuf[i][0] >= middleX && vBuf[i][1] >= middleY)
-			quad1.push_back(vBuf[i]);
-		else if (vBuf[i][0] < middleX && vBuf[i][1] >= middleY)
-			quad2.push_back(vBuf[i]);
-		else if (vBuf[i][0] <= middleX && vBuf[i][1] < middleY)
-			quad3.push_back(vBuf[i]);
-		else if (vBuf[i][0] > middleX && vBuf[i][1] < middleY)
-			quad4.push_back(vBuf[i]);
+		return true;
 	}
+	else
+	{
+		return false;
+	}
+}
 
-	// 3. 사분면별 정렬을 수행
-	// 3-1. 1사분면: x축 내림차순, 값이 같으면 y축 오름차순
-	// 3-2. 2사분면: x축 내림차순, 값이 같으면 y축 내림차순
-	// 3-3. 3사분면: x축 오름차순, 값이 같으면 y축 내림차순
-	// 3-4. 4사분면: x축 오름차순, 값이 같으면 y축 오름차순
-	
-	sort(quad1.begin(), quad1.end(), Object::CompareQuad1);
-	sort(quad2.begin(), quad2.end(), Object::CompareQuad2);
-	sort(quad3.begin(), quad3.end(), Object::CompareQuad3);
-	sort(quad4.begin(), quad4.end(), Object::CompareQuad4);
+int Object::IsCCW(const glm::vec3 stdP, const glm::vec3 p1, const glm::vec3 p2)
+{
+	float crossValue = ((p1.x - stdP.x) * (p2.y - stdP.y)) - ((p2.x - stdP.x) * (p1.y - stdP.y));
 
-	// 4. 원래 배열에 합친다. copy로 복사
-	quad1.insert(quad1.end(), quad2.begin(), quad2.end());
-	quad1.insert(quad1.end(), quad3.begin(), quad3.end());
-	quad1.insert(quad1.end(), quad4.begin(), quad4.end());
-	copy(quad1.begin(), quad1.end(), vBuf);
-	memcpy(objInfo.vBuffer, vBuf, sizeof(float) * objInfo.vCount * 3);
+	if (crossValue > 0)
+		return 1;
+	else if (crossValue < 0)
+		return -1;
+	else
+		return 0;
+}
 
-
-	// 벡터 메모리 헤제
-	vector<glm::vec3>().swap(quad1);
-	vector<glm::vec3>().swap(quad2);
-	vector<glm::vec3>().swap(quad3);
-	vector<glm::vec3>().swap(quad4);
+float Object::GetDist(const glm::vec3 p1, const glm::vec3 p2)
+{
+	float dist = glm::pow((p1.x - p2.x), 2) + glm::pow((p1.y - p2.y), 2);
+	return dist;
 }
 
 void Object::GetCenter()
@@ -170,8 +146,8 @@ void Object::FlyingUpdate()
 	// 날아가기
 	// parametric equation으로 파라미터가 1.0f가 되면 끝임
 	objInfo.flyParam += objInfo.flySpeed * deltaT;
-	glm::vec3 dist = GetFlyingDistance(objInfo.flyParam);
-	objInfo.flyMat = GET_SINGLE(TransformManager).GetTranslateMatrix(dist);
+	glm::vec3 pos = GetFlyingDistance(objInfo.flyParam);
+	objInfo.flyMat = GET_SINGLE(TransformManager).GetTranslateMatrix(pos);
 
 	// 회전하기
 	objInfo.rotDeg += objInfo.rotSpeed * deltaT;
@@ -182,10 +158,10 @@ void Object::FlyingUpdate()
 
 glm::vec3 Object::GetFlyingDistance(float flyParam)
 {
-	objInfo.flyDist[0] = ((1.0f - flyParam) * objInfo.startP[0]) + (flyParam * (objInfo.endP[0]));
-	objInfo.flyDist[1] = ((1.0f - flyParam) * objInfo.startP[1]) + (flyParam * (objInfo.endP[1]));
+	objInfo.flyX = ((1.0f - flyParam) * objInfo.startP[0]) + (flyParam * (objInfo.endP[0]));
+	objInfo.flyY = ((1.0f - flyParam) * objInfo.startP[1]) + (flyParam * (objInfo.endP[1]));
 	
-	return glm::vec3(objInfo.flyDist[0], objInfo.flyDist[1], 0.0f);
+	return glm::vec3(objInfo.flyX, objInfo.flyY, 0.0f);
 }
 
 // 떨어질때 사용할 함수
@@ -196,7 +172,7 @@ void Object::GravityUpdate()
 
 	objInfo.fallDist -= objInfo.fallSpeed * deltaT;
 	objInfo.fallMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(0.0f, objInfo.fallDist, 0.0f));
-	objInfo.fallSpeed += 0.001f;
+	objInfo.fallSpeed += 0.01f;
 	
 	FinalMatUpdate();
 }
@@ -204,8 +180,10 @@ void Object::GravityUpdate()
 void Object::InBasketUpdate(Basket* basket)
 {
 	deltaT = GET_SINGLE(TimeManager).GetDeltaTime();
-	objInfo.ibMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(basket->GetBasketMoveDist(), objInfo.flyDist[1] - (-objInfo.fallDist), 0.0f));
+	float xMove = objInfo.flyX + basket->GetBasketMoveDist();
+	objInfo.ibMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(xMove, 0.0f, 0.0f));
 
+	// 이젠 x좌표가 이상함. 아무래도 바구니가 중심에 있다고 하고 상대적으로 위치가 잡히는 중으로 보임.
 	FinalMatUpdate();
 }
 

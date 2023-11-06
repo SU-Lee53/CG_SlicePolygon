@@ -37,7 +37,8 @@ struct OBJ_INFO
 	// 날아갈때 사용할 변수들
 	glm::vec3 startP = glm::vec3(1.0f);
 	glm::vec3 endP = glm::vec3(1.0f);
-	glm::vec3 flyDist = glm::vec3(1.0f);
+	float flyX = 0.0f;
+	float flyY = 0.0f;
 	float flyParam = 0.0f;
 	float flySpeed = 0.3f;
 	glm::mat4 flyMat = glm::mat4(1.0f);
@@ -76,8 +77,8 @@ public:
 	glm::vec3* GetVertexBuf() { return vBuf; }
 	VAO& GetVAO() { return *_vao; }
 	void SetObjectStatus(OBJ_STATUS status) { objInfo.state = status; }
-	void SetFlyDist(glm::vec3 dist) { objInfo.flyDist = dist; }
-	void SetFallDist(float dist) { objInfo.fallDist = dist; }
+	void SetFlyDist(float posX, float posY) { objInfo.flyX = posX, objInfo.flyY = posY; }
+	void SetFallDist(float GetDist) { objInfo.fallDist = GetDist; }
 	void SetMoveDirection(int dir) { objInfo.moveDirection = dir; }
 	void SetFlyParam(float param) { objInfo.flyParam = param; }
 	void SetInBasketYpos(float posY) { objInfo.yDist = posY; }
@@ -87,80 +88,27 @@ public:
 	void InBasketUpdate(Basket* basket);
 	void vBufferUpdate(glm::mat4 matrix);
 
+	
+
 private:
 	// 자유 도형 생성
 	void CreateFreeObject();
 
-	// 정점 정렬
+	// 이하 반시계 정렬을 위한 변수와 함수
+	// 정렬함수에서 활용할 기준점
+	static glm::vec3 standardP;
+	// 정렬함수
 	void SortVertexCCW();
-	static bool CompareQuad1(const glm::vec3 a, const glm::vec3 b)
-	{
-		if (a[0] > b[0] || ((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
-		{
-			if (((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
-			{
-				return a[1] < b[1];
-			}
-			else
-			{
-				return a[0] > b[0];
-			}
-		}
-		return  a[0] > b[0];
-	}
-	
-	static bool CompareQuad2(const glm::vec3 a, const glm::vec3 b)
-	{
-		if (a[0] > b[0] || ((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
-		{
-			if (((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
-			{
-				return a[1] > b[1];
-			}
-			else
-			{
-				return a[0] > b[0];
-			}
-		}
-		return  a[0] > b[0];
-	}
+	static bool Compare(const glm::vec3 p1, const glm::vec3 p2);
+	static int IsCCW(const glm::vec3 standard, const glm::vec3 p1, const glm::vec3 p2);
+	static float GetDist(const glm::vec3 p1, const glm::vec3 p2);
 
-	static bool CompareQuad3(const glm::vec3 a, const glm::vec3 b)
-	{
-		if (a[0] < b[0] || ((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
-		{
-			if (((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
-			{
-				return a[1] > b[1];
-			}
-			else
-			{
-				return a[0] < b[0];
-			}
-		}
-		return a[0] < b[0];
-	}
-	
-	static bool CompareQuad4(const glm::vec3 a, const glm::vec3 b)
-	{
-		if (a[0] < b[0] || ((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
-		{
-			if (((a[0] - b[0] <= FLT_EPSILON) && (a[0] - b[0] >= 0)) || ((b[0] - a[0] <= FLT_EPSILON) && (b[0] - a[0] >= 0)))
-			{
-				return a[1] < b[1];
-			}
-			else
-			{
-				return a[0] < b[0];
-			}
-		}
-		return a[0] < b[0];
-	}
-
+	// 기타 유틸
 	void GetCenter();
 	glm::vec3 GetFlyingDistance(float flyParam);
 
 	void FinalMatUpdate();
+
 private:
 
 	VAO* _vao = nullptr;
@@ -171,4 +119,3 @@ private:
 	OBJ_INFO objInfo;
 	float deltaT = 0.0f;
 };
-

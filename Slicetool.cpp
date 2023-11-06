@@ -132,13 +132,13 @@ void Slicetool::Slice(LINE_INFO sliceLine, Object* obj, Object** Dest)
 	Object* newObj[2];
 	Dest[0] = new Object(vBuf1, nVcount1 + 2, rgb, { 0.0f, 0.2f, 0.0f }, 0.8f);
 	Dest[0]->SetObjectStatus(OS_FALLING);
-	Dest[0]->SetFlyDist(obj->GetObjInfo().flyDist);
+	Dest[0]->SetFlyDist(obj->GetObjInfo().flyX, obj->GetObjInfo().flyY);
 	//Dest[0]->SetFallDist(obj->GetObjInfo().fallDist);
 	Dest[0]->SetFlyParam(obj->GetObjInfo().flyParam);
 
 	Dest[1] = new Object(vBuf2, nVcount2 + 2, rgb, { 0.0f, 0.2f, 0.0f }, 0.8f);
 	Dest[1]->SetObjectStatus(OS_FALLING);
-	Dest[1]->SetFlyDist(obj->GetObjInfo().flyDist);
+	Dest[1]->SetFlyDist(obj->GetObjInfo().flyX, obj->GetObjInfo().flyY);
 	//Dest[1]->SetFallDist(obj->GetObjInfo().fallDist);
 	Dest[1]->SetFlyParam(obj->GetObjInfo().flyParam);
 
