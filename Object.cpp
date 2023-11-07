@@ -180,8 +180,16 @@ void Object::GravityUpdate()
 void Object::InBasketUpdate(Basket* basket)
 {
 	deltaT = GET_SINGLE(TimeManager).GetDeltaTime();
-	float xMove = objInfo.flyX + basket->GetBasketMoveDist();
-	objInfo.ibMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(xMove, 0.0f, 0.0f));
+	if (basket->GetBasketMoveDirection())
+	{
+		objInfo.moveDist += basket->GetBasketMoveSpeed() * deltaT;
+		objInfo.ibMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(objInfo.moveDist, 0.0f, 0.0f));
+	}
+	else
+	{
+		objInfo.moveDist -= basket->GetBasketMoveSpeed() * deltaT;
+		objInfo.ibMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(objInfo.moveDist, 0.0f, 0.0f));
+	}
 
 	// 이젠 x좌표가 이상함. 아무래도 바구니가 중심에 있다고 하고 상대적으로 위치가 잡히는 중으로 보임.
 	FinalMatUpdate();

@@ -32,8 +32,12 @@ public:
 	void vBufferUpdate();
 
 	glm::mat4 GetBasketMat() { return moveMat; }
+
 	float GetBasketMoveDist() { return moveDist; }
 	float GetBasketHeight() { return height; }
+
+	float GetBasketMoveSpeed() { return moveSpeed; }
+	float GetBasketMoveDirection() { return direction; }
 private:
 	Object* Shape;
 

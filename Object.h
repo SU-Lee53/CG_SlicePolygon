@@ -56,7 +56,7 @@ struct OBJ_INFO
 	int moveDirection = 0;	// 잘렸을때 해당 방향으로 살짝 움직이며 떨어짐
 
 	// 바구니에 떨어졌을때 사용할 변수들
-	float yDist = 0.0f;
+	float moveDist = 0.0f;
 	glm::mat4 ibMat = glm::mat4(1.0f);
 
 	// 최종 변환 행렬
@@ -81,7 +81,6 @@ public:
 	void SetFallDist(float GetDist) { objInfo.fallDist = GetDist; }
 	void SetMoveDirection(int dir) { objInfo.moveDirection = dir; }
 	void SetFlyParam(float param) { objInfo.flyParam = param; }
-	void SetInBasketYpos(float posY) { objInfo.yDist = posY; }
 	// 이동
 	void FlyingUpdate();
 	void GravityUpdate();

@@ -72,8 +72,6 @@ void Basket::GoalInUpdate(vector<Object*> objList)
 		if (TouchedCheck(basketAABB, objAABB) == true)
 		{
 			objList.at(i)->SetObjectStatus(OS_IN_BASKET);
-			objList.at(i)->SetInBasketYpos(objList.at(i)->GetObjInfo().fallDist);
-
 			cout << objList.at(i)->GetObjInfo().fallDist << endl;
 		}
 	}
@@ -92,9 +90,9 @@ void Basket::BasketAABBUpdate()
 AABB Basket::GetObjectAABB(Object* obj)
 {
 	float minX = FLT_MAX;
-	float maxX = FLT_MIN;
+	float maxX = -FLT_MAX;
 	float minY = FLT_MAX;
-	float maxY = FLT_MIN;
+	float maxY = -FLT_MAX;
 
 	for (int i = 0; i < obj->GetObjInfo().vCount; i++)
 	{
