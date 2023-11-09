@@ -220,7 +220,7 @@ void SliceMain::MakeObjectByTime()
 	time_t currentTime = time(nullptr);
 	
 	// 1초에 1번씩
-	if (currentTime - prevTime >= 2)
+	if (currentTime - prevTime >= 1)
 	{
 		// int objType = rand() % 4 + 3;
 		int objType = 6;

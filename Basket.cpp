@@ -124,6 +124,9 @@ AABB Basket::GetObjectAABB(Object* obj)
 
 }
 
+
+
+// 좀더 정확한 충돌확인이 필요해보임
 bool Basket::TouchedCheck(AABB p1, AABB p2)
 {
 	if (p1.right > p2.left && p2.right > p1.left)

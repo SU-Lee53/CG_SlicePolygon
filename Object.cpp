@@ -138,8 +138,9 @@ void Object::Render()
 	glDrawElements(GL_TRIANGLES, _vao->GetElementCount(), GL_UNSIGNED_INT, 0);
 }
 
+///////////////////////
 // 날아갈때 사용할 함수
-
+///////////////////////
 void Object::FlyingUpdate()
 {
 	deltaT = GET_SINGLE(TimeManager).GetDeltaTime();
@@ -164,8 +165,9 @@ glm::vec3 Object::GetFlyingDistance(float flyParam)
 	return glm::vec3(objInfo.flyX, objInfo.flyY, 0.0f);
 }
 
+///////////////////////
 // 떨어질때 사용할 함수
-
+///////////////////////
 void Object::GravityUpdate()
 {
 	deltaT = GET_SINGLE(TimeManager).GetDeltaTime();
@@ -177,6 +179,10 @@ void Object::GravityUpdate()
 	FinalMatUpdate();
 }
 
+
+////////////////////////////////
+// 바구니에 담겼을때 사용할 함수
+////////////////////////////////
 void Object::InBasketUpdate(Basket* basket)
 {
 	deltaT = GET_SINGLE(TimeManager).GetDeltaTime();
@@ -191,7 +197,6 @@ void Object::InBasketUpdate(Basket* basket)
 		objInfo.ibMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(objInfo.moveDist, 0.0f, 0.0f));
 	}
 
-	// 이젠 x좌표가 이상함. 아무래도 바구니가 중심에 있다고 하고 상대적으로 위치가 잡히는 중으로 보임.
 	FinalMatUpdate();
 }
 
