@@ -45,5 +45,7 @@ private:
 
 	time_t prevTime = time(nullptr);
 
+	// 기타 플래그
+	bool showFlyRoute = false;
 };
 

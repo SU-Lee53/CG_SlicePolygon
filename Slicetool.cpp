@@ -32,10 +32,8 @@ void Slicetool::Slice(LINE_INFO sliceLine, Object* obj, Object** Dest)
 			continue;
 		else
 		{
-			cout << i << endl;
 			cl[idx] = i;
 			cp[idx] = GetCrossingPoint(sliceLine, param);
-			cout << "Crossing Point: (" << cp[idx][0] << ", " << cp[idx][1] << ", " << cp[idx][2] << ")" << endl;
 			if (idx++ == 2)
 				break;
 		}
@@ -70,22 +68,6 @@ void Slicetool::Slice(LINE_INFO sliceLine, Object* obj, Object** Dest)
 			nIdx2[i] += obj->GetObjInfo().vCount;
 		}
 	}
-	// 테스트 출력
-	//	cout << "vCount1: " << nVcount1 << endl;
-	//	cout << "index: ";
-	//	for (int i = 0; i < nVcount1; i++)
-	//	{
-	//		cout << nIdx1[i] << ", ";
-	//	}
-	//	cout << endl;
-	//	
-	//	cout << "vCount2: " << nVcount2 << endl;
-	//	cout << "index: ";
-	//	for (int i = 0; i < nVcount2; i++)
-	//	{
-	//		cout << nIdx2[i] << ", ";
-	//	}
-	//	cout << endl;
 
 	// 2. 1에서 얻은 정보로 버퍼 만들기. 색상버퍼는 공용으로 쓰면 될듯
 	// 2-1. 정점버퍼 만들기
@@ -192,7 +174,6 @@ void Slicetool::SetObjectEdges(LINE_INFO* edgeBuf, Object* obj)
 	for (int i = 0; i < obj->GetObjInfo().vCount; i++)
 	{
 		int idx = i * 3;
-		cout << vBuf[idx] << ' ' << vBuf[idx + 1] << ' ' << vBuf[idx + 2] << ' ' << endl;
 	}
 
 	for (int i = 0; i < vCount; i++)
@@ -209,13 +190,6 @@ void Slicetool::SetObjectEdges(LINE_INFO* edgeBuf, Object* obj)
 			lineList[i].end = { vBuf[idx + 3],  vBuf[idx + 4], 0.0f };
 		}
 	}
-
-	//	for (int i = 0; i < obj->GetObjInfo().vCount; i++)
-	//	{
-	//		cout << "start: " << lineList[i].start.x << ", " << lineList[i].start.y
-	//			<< " end: " << lineList[i].end.x << ", " << lineList[i].end.y << endl;
-	//	}
-	//	cout << endl;
 
 	copy(lineList, lineList + vCount, edgeBuf);
 

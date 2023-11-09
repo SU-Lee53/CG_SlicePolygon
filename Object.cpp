@@ -2,6 +2,7 @@
 #include "Object.h"
 
 glm::vec3 Object::standardP = glm::vec3(0.0f, 0.0f, 0.0f);
+float Object::OBJ_FLY_SPEED = 0.3f;
 
 Object::Object(glm::vec3* vertices, int vCount, RGB rgb, glm::vec3 startP, float endY)
 {
@@ -138,6 +139,17 @@ void Object::Render()
 	glDrawElements(GL_TRIANGLES, _vao->GetElementCount(), GL_UNSIGNED_INT, 0);
 }
 
+void Object::DrawRoute()
+{
+	glBegin(GL_LINES);
+
+	glVertex3f(objInfo.startP[0], objInfo.startP[1], objInfo.startP[2]);
+	glVertex3f(objInfo.endP[0], objInfo.endP[1], objInfo.endP[2]);
+
+	glEnd();
+
+}
+
 ///////////////////////
 // 날아갈때 사용할 함수
 ///////////////////////
@@ -146,7 +158,7 @@ void Object::FlyingUpdate()
 	deltaT = GET_SINGLE(TimeManager).GetDeltaTime();
 	// 날아가기
 	// parametric equation으로 파라미터가 1.0f가 되면 끝임
-	objInfo.flyParam += objInfo.flySpeed * deltaT;
+	objInfo.flyParam += OBJ_FLY_SPEED * deltaT;
 	glm::vec3 pos = GetFlyingDistance(objInfo.flyParam);
 	objInfo.flyMat = GET_SINGLE(TransformManager).GetTranslateMatrix(pos);
 

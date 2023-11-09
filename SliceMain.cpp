@@ -16,6 +16,13 @@ void SliceMain::init()
 	cam = new Camera(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.0f, 0.f));
 	proj = new Projection(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f);
 	GET_SINGLE(TimeManager).Init();
+
+	cout <<
+		"키보드 명령어"			<<	'\n'	<<
+		"m/M : 폴리곤 LINE/FILL"<<	'\n'	<<
+		"r/R : 경로 출력 ON/OFF"<<	'\n'	<<
+		"+/- : 날아오는 속도 변경(회전속도는 변하지 않음)" << endl;
+
 }
 
 void SliceMain::drawScene()
@@ -133,6 +140,25 @@ void SliceMain::KeyboardUpdate()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		break;
 
+	case '+':
+		Object::IncreaseFlySpeed(0.01f);
+		break;
+
+	case '-':
+		Object::DecreaseFlySpeed(0.01f);
+		break;
+
+	case 'r':
+		showFlyRoute = true;
+		break;
+		
+	case 'R':
+		showFlyRoute = false;
+		break;
+
+	case 'q':
+		exit(0);
+
 	}
 
 }
@@ -145,6 +171,17 @@ void SliceMain::Render()
 		basket = new Basket();
 	}
 
+	if (showFlyRoute)
+	{
+		for (int i = 0; i < objList.size(); i++)
+		{
+			if (objList.at(i)->GetObjInfo().state != OS_FLYING)
+				continue;
+
+			objList.at(i)->DrawRoute();
+		}
+	}
+
 	if (objList.size() != 0)
 	{
 		for (int i = 0; i < objList.size(); i++)
@@ -155,12 +192,12 @@ void SliceMain::Render()
 	}
 
 	GET_SINGLE(TransformManager).Bind(worldMat, shaderID);
-
 	if (sliceLine.start.x != -1.0f && sliceLine.start.y != -1.0f && sliceLine.end.x != -1.0f && sliceLine.end.y != -1.0f)
 	{
 		GET_SINGLE(TransformManager).Bind(worldMat, shaderID);
 		DrawLine(sliceLine.start, sliceLine.end);
 	}
+
 
 	if (basket != nullptr)
 	{

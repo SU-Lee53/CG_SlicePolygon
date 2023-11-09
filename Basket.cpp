@@ -72,7 +72,6 @@ void Basket::GoalInUpdate(vector<Object*> objList)
 		if (TouchedCheck(basketAABB, objAABB) == true)
 		{
 			objList.at(i)->SetObjectStatus(OS_IN_BASKET);
-			cout << objList.at(i)->GetObjInfo().fallDist << endl;
 		}
 	}
 }

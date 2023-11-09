@@ -40,7 +40,7 @@ struct OBJ_INFO
 	float flyX = 0.0f;
 	float flyY = 0.0f;
 	float flyParam = 0.0f;
-	float flySpeed = 0.3f;
+	// 날아가는 속도는 모든객체 동기화를 위해 클래스 static 변수로 
 	glm::mat4 flyMat = glm::mat4(1.0f);
 
 	// 돌면서 날아갈때 사용할 변수
@@ -51,7 +51,7 @@ struct OBJ_INFO
 
 	// 떨어질때 사용할 변수들
 	float fallDist = 0.0f;
-	float fallSpeed = (static_cast<float>(rand()) / (RAND_MAX / 7)) * 0.1;
+	float fallSpeed = (static_cast<float>(rand()) / (RAND_MAX / 7)) * 0.098f;
 	glm::mat4 fallMat = glm::mat4(1.0f);
 	int moveDirection = 0;	// 잘렸을때 해당 방향으로 살짝 움직이며 떨어짐
 
@@ -76,18 +76,30 @@ public:
 	OBJ_INFO GetObjInfo() { return objInfo; }
 	glm::vec3* GetVertexBuf() { return vBuf; }
 	VAO& GetVAO() { return *_vao; }
+
 	void SetObjectStatus(OBJ_STATUS status) { objInfo.state = status; }
 	void SetFlyDist(float posX, float posY) { objInfo.flyX = posX, objInfo.flyY = posY; }
 	void SetFallDist(float GetDist) { objInfo.fallDist = GetDist; }
 	void SetMoveDirection(int dir) { objInfo.moveDirection = dir; }
 	void SetFlyParam(float param) { objInfo.flyParam = param; }
+	
+	static void IncreaseFlySpeed(float add) { Object::OBJ_FLY_SPEED += add; }
+	static void DecreaseFlySpeed(float sub) 
+	{
+		Object::OBJ_FLY_SPEED -= sub; 
+		if(Object::OBJ_FLY_SPEED <= 0.0f)
+			Object::OBJ_FLY_SPEED += sub;
+	}
+
+	// 경로 보이기
+	void DrawRoute();
+	
 	// 이동
 	void FlyingUpdate();
 	void GravityUpdate();
 	void InBasketUpdate(Basket* basket);
 	void vBufferUpdate(glm::mat4 matrix);
 
-	
 
 private:
 	// 자유 도형 생성
@@ -108,6 +120,7 @@ private:
 
 	void FinalMatUpdate();
 
+
 private:
 
 	VAO* _vao = nullptr;
@@ -117,4 +130,7 @@ private:
 
 	OBJ_INFO objInfo;
 	float deltaT = 0.0f;
+
+	static float OBJ_FLY_SPEED;
+
 };
