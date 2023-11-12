@@ -186,7 +186,7 @@ void Object::GravityUpdate()
 
 	objInfo.fallDist -= objInfo.fallSpeed * deltaT;
 	objInfo.fallMat = GET_SINGLE(TransformManager).GetTranslateMatrix(glm::vec3(0.0f, objInfo.fallDist, 0.0f));
-	objInfo.fallSpeed += 0.01f;
+	objInfo.fallSpeed += 0.98f * deltaT;
 	
 	FinalMatUpdate();
 }
@@ -233,4 +233,5 @@ void Object::vBufferUpdate(glm::mat4 matrix)
 
 	// 하는김에 중심점도 업데이트
 	GetCenter();
+	
 }
